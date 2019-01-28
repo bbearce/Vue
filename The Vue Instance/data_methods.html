@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Declarative Rendering</title>
+    <!-- development version, includes helpful console warnings -->
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+</head>
+<body>
+
+    <div id="app">
+        <p>{{ foo }}</p>
+        <!-- this will no longer update `foo`! -->
+        <button v-on:click="foo = 'baz'">Change it</button>
+    </div>
+
+    <div id="example"></div>
+
+    <script type="text/javascript">
+        // Our data object
+        var data = { a: 1 }
+
+        // The object is added to a Vue instance
+        var vm = new Vue({
+        data: data
+        })
+
+        // Getting the property on the instance
+        // returns the one from the original data
+        vm.a == data.a // => true
+
+        // Setting the property on the instance
+        // also affects the original data
+        vm.a = 2
+        data.a // => 2
+
+        // ... and vice-versa
+        data.a = 3
+        vm.a // => 3
+
+        // When this data changes, the view will re-render. It should be noted that properties in data are only reactive if they existed when the instance was created. That means if you add a new property, like:
+
+        vm.b = 'hi'
+
+        // For instance
+
+        data.b = vm.b
+        vm.b = 'hello'
+
+        data.b //=> 'hi' not 'hello'
+
+        // There is an exception
+        var obj = {
+        foo: 'bar'
+        }
+
+        Object.freeze(obj) // this keeps obj constant
+
+        new Vue({
+        el: '#app',
+        data: obj
+        })
+
+        // Go in and try this
+        // obj.foo = 'anthing new' // there is no change to 
+
+        var vm2 = new Vue({
+        el: '#example',
+        data: data
+        })
+
+        vm2.$data === data // => true
+        vm2.$el === document.getElementById('example') // => true
+
+        // $watch is an instance method
+        vm2.$watch('a', function (newValue, oldValue) {
+            // This callback will be called when `vm.a` changes
+            console.log(`old value was ${oldValue} and new value of a is ${newValue}`)
+        })
+        
+
+        
+    </script>
+
+
+</body>
+</html>
